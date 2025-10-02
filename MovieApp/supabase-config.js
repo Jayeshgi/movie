@@ -1,0 +1,3 @@
+// supabase-config.js
+const SUPABASE_URL = "https://oejfjzprlrobomfozile.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lamZqenBybHJvYm9tZm96aWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMzMjc3NTcsImV4cCI6MjA1ODkwMzc1N30.VlQuU-opluYy2cTJXOIRNNnyyYOn62qzrzFsA0BYKvU";

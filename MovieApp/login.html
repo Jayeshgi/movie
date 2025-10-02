@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Should I Watch It? - Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Leaflet for OpenStreetMap -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <!-- Cinematic Light Effect -->
+  <div class="film-grain"></div>
+  <div class="spotlight"></div>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Should I Watch It? Logo" />
+    </div>
+    <div class="nav-toggle">
+      <i class="fas fa-bars"></i>
+    </div>
+    <ul class="nav-menu">
+      <li><button class="btn" onclick="window.location.href='index.html'"><span>Home</span></button></li>
+      <li><button class="btn" onclick="window.location.href='kids.html'"><span>Kids</span></button></li>
+      <li><!-- Logout button placeholder --></li>
+    </ul>
+  </nav>
+
+  <!-- Auth Container -->
+  <div class="cine-auth">
+    <!-- Header -->
+    <header class="auth-header">
+      <div class="logo">
+        <i class="fas fa-film"></i>
+        <span>BINGE WATCH</span>
+      </div>
+    </header>
+    
+    <!-- Interactive Tabs -->
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="login">
+          <i class="fas fa-ticket-alt"></i>
+          <span>Login</span>
+        </button>
+        <button class="tab-btn" data-tab="register">
+          <i class="fas fa-user-plus"></i>
+          <span>Register</span>
+        </button>
+      </div>
+      <div class="tab-indicator"></div>
+    </div>
+    
+    <!-- Login Form -->
+    <form class="auth-form active" id="loginForm">
+      <div class="input-field gold-border">
+        <i class="fas fa-envelope"></i>
+        <input type="email" placeholder=" " id="login-email" required>
+        <label>Email</label>
+        <div class="underline"></div>
+      </div>
+      
+      <div class="input-field gold-border">
+        <i class="fas fa-lock"></i>
+        <input type="password" placeholder=" " id="login-password" required>
+        <label>Password</label>
+        <button type="button" class="toggle-pw">
+          <i class="fas fa-eye"></i>
+        </button>
+        <div class="underline"></div>
+      </div>
+      
+      <div class="form-footer">
+        <label class="remember">
+          <input type="checkbox">
+          <span class="checkmark"></span>
+          Remember me
+        </label>
+        <a href="#" class="forgot-pw">Forgot Password?</a>
+      </div>
+      
+      <button type="submit" class="auth-submit">
+        <span>Access Your Account</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+    
+    <!-- Registration Form -->
+    <form class="auth-form" id="registerForm">
+      <div class="input-field gold-border">
+        <i class="fas fa-envelope"></i>
+        <input type="email" placeholder=" " id="register-email" required>
+        <label>Email</label>
+        <div class="underline"></div>
+      </div>
+      
+      <div class="input-field gold-border">
+        <i class="fas fa-lock"></i>
+        <input type="password" placeholder=" " id="register-password" class="pw-input" required>
+        <label>Password</label>
+        <button type="button" class="toggle-pw">
+          <i class="fas fa-eye"></i>
+        </button>
+        <div class="underline"></div>
+        <div class="pw-strength">
+          <div class="strength-bar">
+            <div class="strength-fill"></div>
+          </div>
+          <span class="strength-text">Weak</span>
+        </div>
+      </div>
+      
+      <div class="input-field gold-border">
+        <i class="fas fa-lock"></i>
+        <input type="password" placeholder=" " id="register-confirm-password" required>
+        <label>Confirm Password</label>
+        <div class="underline"></div>
+      </div>
+      
+      <div class="form-footer">
+        <label class="terms">
+          <input type="checkbox" required>
+          <span class="checkmark"></span>
+          I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+        </label>
+      </div>
+      
+      <button type="submit" class="auth-submit">
+        <span>Create Account</span>
+        <i class="fas fa-crown"></i>
+      </button>
+    </form>
+    
+    <!-- Footer -->
+    <footer class="auth-footer">
+      <p>© 2025 Should I Watch It?. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Help Center</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+      <div class="geolocation">
+        <p id="location-address">Fetching your location...</p>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- Independent Map Container -->
+  <div class="map-container">
+    <div id="map" style="width: 100%; height: 300px;"></div>
+  </div>
+  
+  <div class="wave-container">
+    <div class="wave" id="wave1"></div>
+    <div class="wave" id="wave2"></div>
+    <div class="wave" id="wave3"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="constants.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="login.js"></script>
+  <script>
+    // Geolocation and OpenStreetMap
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          // Reverse Geocoding with OpenStreetMap Nominatim
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+            .then(response => response.json())
+            .then(data => {
+              const address = data.display_name || 'Location not found';
+              document.getElementById('location-address').textContent = `Your Location: ${address}`;
+            })
+            .catch(error => {
+              document.getElementById('location-address').textContent = 'Unable to fetch address';
+              console.error('Geocoding error:', error);
+            });
+
+          // Initialize OpenStreetMap with Leaflet
+          const map = L.map('map').setView([lat, lon], 14);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup('Your Location').openPopup();
+        },
+        (error) => {
+          document.getElementById('location-address').textContent = 'Geolocation not supported or permission denied';
+          console.error('Geolocation error:', error);
+          
+          // Fallback map centered on a default location (e.g., New York)
+          const map = L.map('map').setView([40.7128, -74.0060], 10);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+        }
+      );
+    } else {
+      document.getElementById('location-address').textContent = 'Geolocation not supported by your browser';
+      const map = L.map('map').setView([40.7128, -74.0060], 10);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+    }
+  </script>
+</body>
+</html>
